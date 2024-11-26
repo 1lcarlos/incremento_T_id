@@ -24,8 +24,16 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
                 {"tabla_relacionada": "cca_estructuranovedadfmi", "clave_foranea": "cca_predio_novedad_fmi"},
                 {"tabla_relacionada": "cca_estructuranovedadnumeropredial", "clave_foranea": "cca_predio_novedad_numeros_prediales"},
                 {"tabla_relacionada": "extdireccion", "clave_foranea": "cca_predio_direccion"},
+                {"tabla_relacionada": "cca_adjunto", "clave_foranea": "cca_predio_adjunto"},
                 
             ],
+        },
+        {
+          "tabla_principal": "cca_terreno",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                {"tabla_relacionada": "cca_predio", "clave_foranea": "predio"}, 
+            ],  
         },
         {
             "tabla_principal": "cca_interesado",
