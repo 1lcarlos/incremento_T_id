@@ -25,11 +25,19 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
                 {"tabla_relacionada": "cca_estructuranovedadnumeropredial", "clave_foranea": "cca_predio_novedad_numeros_prediales"},
                 {"tabla_relacionada": "extdireccion", "clave_foranea": "cca_predio_direccion"},
                 {"tabla_relacionada": "cca_adjunto", "clave_foranea": "cca_predio_adjunto"},
+                {"tabla_relacionada": "cca_ofertasmercadoinmobiliario", "clave_foranea": "predio"},
                 
             ],
         },
         {
           "tabla_principal": "cca_terreno",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                {"tabla_relacionada": "cca_predio", "clave_foranea": "predio"}, 
+            ],  
+        },
+        {
+          "tabla_principal": "cca_construccion",
             "clave_primaria": "T_Id",
             "relaciones": [
                 {"tabla_relacionada": "cca_predio", "clave_foranea": "predio"}, 
@@ -62,6 +70,28 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
             "clave_primaria": "T_Id",
             "relaciones": [
                 {"tabla_relacionada": "cca_fuenteadministrativa_derecho", "clave_foranea": "derecho"},               
+            ],
+        },
+        {
+            "tabla_principal": "cca_caracteristicasunidadconstruccion",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                {"tabla_relacionada": "cca_calificacionconvencional", "clave_foranea": "calificacion_convencional"},               
+            ],
+        },
+        {
+            "tabla_principal": "cca_caracteristicasunidadconstruccion",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                {"tabla_relacionada": "cca_calificacionconvencional", "clave_foranea": "calificacion_convencional"},               
+            ],
+        },
+        {
+            "tabla_principal": "cca_unidadconstruccion",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                {"tabla_relacionada": "cca_caracteristicasunidadconstruccion", "clave_foranea": "caracteristicasunidadconstruccion"},               
+                {"tabla_relacionada": "cca_construccion", "clave_foranea": "construccion"},               
             ],
         },
     ]
