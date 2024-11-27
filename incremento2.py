@@ -29,18 +29,13 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
                 
             ],
         },
-        {
-          "tabla_principal": "cca_terreno",
-            "clave_primaria": "T_Id",
-            "relaciones": [
-                {"tabla_relacionada": "cca_predio", "clave_foranea": "predio"}, 
-            ],  
-        },
+        
         {
           "tabla_principal": "cca_construccion",
             "clave_primaria": "T_Id",
             "relaciones": [
-                {"tabla_relacionada": "cca_predio", "clave_foranea": "predio"}, 
+                {"tabla_relacionada": "cca_unidadconstruccion", "clave_foranea": "construccion"}, 
+                {"tabla_relacionada": "cca_adjunto", "clave_foranea": "cca_construccion_adjunto"}, 
             ],  
         },
         {
@@ -49,6 +44,7 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
             "relaciones": [
                 {"tabla_relacionada": "cca_derecho", "clave_foranea": "interesado"},
                 {"tabla_relacionada": "cca_miembros", "clave_foranea": "interesado"},
+                {"tabla_relacionada": "cca_adjunto", "clave_foranea": "cca_interesado_adjunto"},
             ],
         },
         {
@@ -59,10 +55,11 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
                 {"tabla_relacionada": "cca_miembros", "clave_foranea": "agrupacion"},
             ],
         },{
-            "tabla_principal": "cca_fuentesadministrativas",
+            "tabla_principal": "cca_fuenteadministrativa",
             "clave_primaria": "T_Id",
             "relaciones": [
                 {"tabla_relacionada": "cca_fuenteadministrativa_derecho", "clave_foranea": "fuente_administrativa"},               
+                {"tabla_relacionada": "cca_adjunto", "clave_foranea": "cca_fuenteadminstrtiva_adjunto"},               
             ],
         },
         {
@@ -76,24 +73,23 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
             "tabla_principal": "cca_caracteristicasunidadconstruccion",
             "clave_primaria": "T_Id",
             "relaciones": [
-                {"tabla_relacionada": "cca_calificacionconvencional", "clave_foranea": "calificacion_convencional"},               
+                {"tabla_relacionada": "cca_unidadconstruccion", "clave_foranea": "caracteristicasunidadconstruccion"},               
             ],
         },
         {
-            "tabla_principal": "cca_caracteristicasunidadconstruccion",
+            "tabla_principal": "cca_calificacionconvencional",
             "clave_primaria": "T_Id",
             "relaciones": [
-                {"tabla_relacionada": "cca_calificacionconvencional", "clave_foranea": "calificacion_convencional"},               
+                {"tabla_relacionada": "cca_caracteristicasunidadconstruccion", "clave_foranea": "calificacion_convencional"},               
             ],
-        },
+        },        
         {
             "tabla_principal": "cca_unidadconstruccion",
             "clave_primaria": "T_Id",
             "relaciones": [
-                {"tabla_relacionada": "cca_caracteristicasunidadconstruccion", "clave_foranea": "caracteristicasunidadconstruccion"},               
-                {"tabla_relacionada": "cca_construccion", "clave_foranea": "construccion"},               
+                {"tabla_relacionada": "cca_adjunto", "clave_foranea": "cca_unidadconstruccion_adjunto"},               
             ],
-        },
+        },        
     ]
     
     try:
@@ -150,6 +146,6 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
         conn.close()
 
 # Ejemplo de uso
-ruta_geopackage = "manzana_10.gpkg"
+ruta_geopackage = "manzana_8.gpkg"
 incremento = 1000  # Valor a sumar a los IDs
 actualizar_ids_geopackage(ruta_geopackage, incremento)
