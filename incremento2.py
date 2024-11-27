@@ -90,6 +90,34 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
                 {"tabla_relacionada": "cca_adjunto", "clave_foranea": "cca_unidadconstruccion_adjunto"},               
             ],
         },        
+        {
+            "tabla_principal": "cca_adjunto",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                              
+            ],
+        },        
+        {
+            "tabla_principal": "cca_terreno",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                              
+            ],
+        },        
+        {
+            "tabla_principal": "extdireccion",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                              
+            ],
+        },        
+        {
+            "tabla_principal": "cca_miembros",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                              
+            ],
+        },        
     ]
     
     try:
