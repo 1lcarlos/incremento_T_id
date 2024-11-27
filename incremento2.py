@@ -118,6 +118,34 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
                               
             ],
         },        
+        {
+            "tabla_principal": "cca_estructuranovedadfmi",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                              
+            ],
+        },        
+        {
+            "tabla_principal": "cca_estructuranovedadnumeropredial",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                              
+            ],
+        },        
+        {
+            "tabla_principal": "cca_predio_informalidad",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                              
+            ],
+        },        
+        {
+            "tabla_principal": "cca_predio_copropiedad",
+            "clave_primaria": "T_Id",
+            "relaciones": [
+                              
+            ],
+        },        
     ]
     
     try:
@@ -174,6 +202,6 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
         conn.close()
 
 # Ejemplo de uso
-ruta_geopackage = "manzana_8.gpkg"
+ruta_geopackage = "manzana_14_2.gpkg"
 incremento = 1000  # Valor a sumar a los IDs
 actualizar_ids_geopackage(ruta_geopackage, incremento)
