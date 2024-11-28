@@ -1,5 +1,4 @@
 import sqlite3
-import geopandas as gpd
 import pandas as pd
 import logging
 
@@ -11,13 +10,13 @@ logging.basicConfig(
 )
 
 # Ruta a los GeoPackages
-geopackage1 = "manzana_14_2.gpkg"
-geopackage2 = "consolidado.gpkg"
+geopackage1 = "modelo_captura_20241029 _diego.gpkg"
+geopackage2 = "modelo_captura_20241029_1_26.gpkg"
 
 # Listado de tablas a copiar y procesar
 tablas = ["cca_usuario","cca_predio", "cca_interesado", "cca_agrupacioninteresados", "cca_miembros", "cca_fuenteadministrativa",
           "cca_derecho", "cca_fuenteadministrativa_derecho", "cca_estructuranovedadfmi", "cca_estructuranovedadnumeropredial",
-          "cca_predio_informalidad", "cca_predio_copropiedad", "cca_ofertasmercadoinmobiliario", "extreferenciaregistralsistemaantiguo",
+          "cca_predio_informalidad", "cca_predio_copropiedad", "cca_ofertasmercadoinmobiliario", 
           "cca_calificacionconvencional", "cca_caracteristicasunidadconstruccion", "cca_adjunto"]
 
 # Función para eliminar la sigla "cca_" del nombre de la tabla
@@ -35,6 +34,17 @@ def listar_tablas(geopackage):
     except Exception as e:
         logging.error(f"Error al listar tablas del GeoPackage '{geopackage}': {e}")
         return []
+
+# Función para eliminar tablas existentes en el GeoPackage destino
+def eliminar_tabla_si_existe(geopackage, tabla):
+    try:
+        with sqlite3.connect(geopackage) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"DROP TABLE IF EXISTS {tabla};")
+            conn.commit()
+            logging.info(f"Tabla '{tabla}' eliminada en el GeoPackage destino si existía.")
+    except Exception as e:
+        logging.error(f"Error al intentar eliminar la tabla '{tabla}' en el GeoPackage destino: {e}")
 
 # Procesamiento de las tablas
 def procesar_geopackage(geopackage1, geopackage2, tablas):
@@ -56,14 +66,17 @@ def procesar_geopackage(geopackage1, geopackage2, tablas):
             try:
                 with sqlite3.connect(geopackage1) as conn1:
                     df = pd.read_sql_query(f"SELECT * FROM {tabla}", conn1)
-                
+
                 # Generar el nuevo nombre de la tabla
                 nuevo_nombre = quitar_prefijo(tabla)
+
+                # Eliminar la tabla en el GeoPackage 2 si ya existe
+                eliminar_tabla_si_existe(geopackage2, nuevo_nombre)
 
                 # Guardar la tabla en el GeoPackage 2
                 with sqlite3.connect(geopackage2) as conn2:
                     df.to_sql(nuevo_nombre, conn2, if_exists="replace", index=False)
-                
+
                 logging.info(f"Tabla '{tabla}' exportada como '{nuevo_nombre}' en el GeoPackage 2.")
 
             except Exception as e:
