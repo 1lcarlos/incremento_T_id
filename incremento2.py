@@ -202,6 +202,6 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
         conn.close()
 
 # Ejemplo de uso
-ruta_geopackage = "manzana_14_2.gpkg"
-incremento = 1000  # Valor a sumar a los IDs
+ruta_geopackage = "modelo_captura_20241029 _diego.gpkg"
+incremento = 30000  # Valor a sumar a los IDs
 actualizar_ids_geopackage(ruta_geopackage, incremento)
