@@ -21,8 +21,7 @@ def migrate_data():
             return
 
         # Migrar datos
-        insert_query = """
-        INSERT INTO cca_predio (
+        insert_queries = ["""INSERT INTO cca_predio (
             T_Id, id_operacion, departamento_municipio, clase_suelo_registro, categoria_suelo, 
             validacion_datos_localizacion, nupre, numero_predial, numero_predial_anterior, 
             validacion_datos_catastrales, tiene_fmi, codigo_orip, matricula_inmobiliaria, estado_folio, 
@@ -49,9 +48,9 @@ def migrate_data():
             otro_cual_resultado_visita, suscribe_acta_colindancia, valor_referencia, fecha_visita_predial, 
             tipo_documento_quien_atendio, numero_documento_quien_atendio, nombres_apellidos_quien_atendio, 
             celular, correo_electronico, observaciones, despojo_abandono, estrato, otro_cual_estrato, usuario
-        FROM predio;
-
-        INSERT INTO cca_interesado  (
+        FROM predio;""",
+        
+        """INSERT INTO cca_interesado  (
             T_Id,  tipo, tipo_documento, documento_identidad, 
             primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, 
             sexo, grupo_etnico, razon_social, departamento, municipio, 
@@ -65,30 +64,30 @@ def migrate_data():
             sexo, grupo_etnico, razon_social, departamento, municipio, 
             direccion_residencia, telefono, correo_electronico,
             autoriza_notificacion_correo, estado_civil
-        FROM interesado;
+        FROM interesado;""",
 
-        INSERT INTO cca_agrupacioninteresados (
+        """INSERT INTO cca_agrupacioninteresados (
             T_Id,  tipo, nombre
         )
         SELECT 
             T_Id,  tipo, nombre
-        FROM agrupacioninteresados;
+        FROM agrupacioninteresados;""",
 
-        INSERT INTO cca_miembros (
+        """INSERT INTO cca_miembros (
             T_Id,  interesado, agrupacion, participacion
         )
         SELECT 
             T_Id,  interesado, agrupacion, participacion
-        FROM miembros;
+        FROM miembros;""",
 
-        INSERT INTO cca_fuenteadministrativa (
-            T_Id,  tipo, numero_fuente, fecha_documento_fuente, e_emisor, observacion
+        """INSERT INTO cca_fuenteadministrativa (
+            T_Id,  tipo, numero_fuente, fecha_documento_fuente, ente_emisor, observacion
         )
         SELECT 
             T_Id,  tipo, numero_fuente, fecha_documento_fuente, ente_emisor, observacion
-        FROM fuenteadministrativa;
+        FROM fuenteadministrativa;""",
 
-        INSERT INTO cca_derecho (
+        """INSERT INTO cca_derecho (
             T_Id,  tipo, cuota_participacion, fraccion_derecho, 
             fecha_inicio_tenencia, origen_derecho, observacion, 
             agrupacion_interesados, interesado, predio
@@ -97,44 +96,44 @@ def migrate_data():
             T_Id,  tipo, cuota_participacion, fraccion_derecho,
             fecha_inicio_tenencia, origen_derecho, observacion, 
             agrupacion_interesados, interesado, predio
-        FROM derecho;
+        FROM derecho;""",
 
-        INSERT INTO cca_fuenteadministrativa_derecho (
+        """INSERT INTO cca_fuenteadministrativa_derecho (
             derecho, fuente_administrativa
         )
         SELECT 
             derecho, fuente_administrativa
-        FROM fuenteadministrativa_derecho;
+        FROM fuenteadministrativa_derecho;""",
 
-        INSERT INTO cca_estructuranovedadfmi (
+        """INSERT INTO cca_estructuranovedadfmi (
             T_Id,  codigo_orip, numero_fmi, tipo_novedadfmi, cca_predio_novedad_fmi
         )
         SELECT
             T_Id,  codigo_orip, numero_fmi, tipo_novedadfmi, cca_predio_novedad_fmi
-        FROM estructuranovedadfmi;
+        FROM estructuranovedadfmi;""",
 
-        INSERT INTO cca_estructuranovedadnumeropredial (
+        """INSERT INTO cca_estructuranovedadnumeropredial (
             T_Id,  numero_predial, tipo_novedad, cca_predio_novedad_numeros_prediales
         )
         SELECT 
             T_Id,  numero_predial, tipo_novedad, cca_predio_novedad_numeros_prediales
-        FROM estructuranovedadnumeropredial ;
+        FROM estructuranovedadnumeropredial ;""",
 
-        INSERT INTO cca_predio_informalidad (
+        """INSERT INTO cca_predio_informalidad (
             T_Id,  cca_predio_formal, cca_predio_informal
         )
         SELECT 
             T_Id,  cca_predio_formal, cca_predio_informal
-        FROM predio_informalidad;
+        FROM predio_informalidad;""",
 
-        INSERT INTO cca_predio_copropiedad (
+        """INSERT INTO cca_predio_copropiedad (
             T_Id, unidad_predial, matriz, coeficiente
         )
         SELECT 
             T_Id, unidad_predial, matriz, coeficiente
-        FROM predio_copropiedad;
+        FROM predio_copropiedad;""",
 
-        INSERT INTO cca_ofertasmercadoinmobiliario (
+        """INSERT INTO cca_ofertasmercadoinmobiliario (
             T_Id,  tipo_oferta, valor_pedido, valor_negociado, 
             fecha_captura_oferta, tiempo_oferta_mercado, nombre_oferente, 
             numero_contacto_oferente, predio
@@ -143,9 +142,9 @@ def migrate_data():
             T_Id,  tipo_oferta, valor_pedido, valor_negociado, 
             fecha_captura_oferta, tiempo_oferta_mercado, nombre_oferente, 
             numero_contacto_oferente, predio
-        FROM ofertasmercadoinmobiliario;
+        FROM ofertasmercadoinmobiliario;""",
 
-        INSERT INTO cca_calificacionconvencional (
+        """INSERT INTO cca_calificacionconvencional (
             T_Id,  tipo_calificar, total_calificacion, 
             clase_calificacion, armazon, muros, cubierta, 
             conservacion_estructura, subtotal_estructura, fachada, 
@@ -164,9 +163,9 @@ def migrate_data():
             mobiliario_banio, conservacion_banio, subtotal_banio, 
             tamanio_cocina, enchape_cocina, mobiliario_cocina, 
             conservacion_cocina, subtotal_cocina, cerchas, subtotal_cerchas
-        FROM calificacionconvencional ;
+        FROM calificacionconvencional ;""",
 
-        INSERT INTO cca_caracteristicasunidadconstruccion (
+        """INSERT INTO cca_caracteristicasunidadconstruccion (
             T_Id,  identificador, tipo_dominio, tipo_construccion, 
             tipo_unidad_construccion, tipo_planta, total_habitaciones, 
             total_banios, total_locales, total_plantas, uso, 
@@ -180,9 +179,9 @@ def migrate_data():
             uso, anio_construccion, area_construida, area_privada_construida, 
             tipo_anexo, tipo_tipologia, observaciones, 
             calificacion_convencional
-        FROM caracteristicasunidadconstruccion;
+        FROM caracteristicasunidadconstruccion;""",
 
-        INSERT INTO cca_adjunto (
+        """INSERT INTO cca_adjunto (
             T_Id,  archivo, observaciones, procedencia, tipo_archivo, relacion_soporte, 
             dependencia_ucons, ruta_modificada, cca_construccion_adjunto, cca_fuenteadminstrtiva_adjunto, 
             cca_interesado_adjunto, cca_unidadconstruccion_adjunto, cca_predio_adjunto, cca_puntocontrol_adjunto, 
@@ -193,11 +192,13 @@ def migrate_data():
             dependencia_ucons, ruta_modificada, cca_construccion_adjunto, cca_fuenteadminstrtiva_adjunto, 
             cca_interesado_adjunto, cca_predio_adjunto, cca_unidadconstruccion_adjunto, cca_puntocontrol_adjunto, 
             cca_puntolevantamiento_adjunto, cca_puntolindero_adjunto, cca_puntoreferencia_adjunto
-        FROM adjunto; 
+        FROM adjunto;""" 
 
-        """
+        ]
                 
-        cursor.execute(insert_query)
+        for query in insert_queries:
+            cursor.execute(query)
+        
         conn.commit()
         print("Migración completada con éxito.")
     
