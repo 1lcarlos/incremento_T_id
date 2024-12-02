@@ -1,7 +1,9 @@
 import sqlite3
 
+ruta_txt = "rutas_geopackages.txt"  
+incremento_inicial = 1000  
+
 def actualizar_ids_geopackage(geopackage_path, incremento):
-    # Definir relaciones
     relaciones = [
         {
             "tabla_principal": "cca_usuario",
@@ -149,59 +151,53 @@ def actualizar_ids_geopackage(geopackage_path, incremento):
     ]
     
     try:
-        # Conectar al GeoPackage
         conn = sqlite3.connect(geopackage_path)
         cursor = conn.cursor()
-
-        # Desactivar claves foráneas
         cursor.execute("PRAGMA foreign_keys = OFF;")
 
-        # Iterar sobre cada relación definida
         for relacion in relaciones:
             tabla_principal = relacion["tabla_principal"]
             clave_primaria = relacion["clave_primaria"]
             relaciones_foraneas = relacion["relaciones"]
-
-            # Obtener los IDs actuales de la tabla principal
             cursor.execute(f"SELECT {clave_primaria} FROM {tabla_principal};")
             ids_principales = cursor.fetchall()
 
-            # Actualizar los IDs en la tabla principal y las tablas relacionadas
             for (id_actual,) in ids_principales:
                 nuevo_id = id_actual + incremento
-
-                # Actualizar clave primaria en la tabla principal
                 cursor.execute(
                     f"UPDATE {tabla_principal} SET {clave_primaria} = ? WHERE {clave_primaria} = ?;",
                     (nuevo_id, id_actual),
                 )
 
-                # Actualizar claves foráneas en las tablas relacionadas
                 for relacion_foranea in relaciones_foraneas:
                     tabla_relacionada = relacion_foranea["tabla_relacionada"]
                     clave_foranea = relacion_foranea["clave_foranea"]
-
                     cursor.execute(
                         f"UPDATE {tabla_relacionada} SET {clave_foranea} = ? WHERE {clave_foranea} = ?;",
                         (nuevo_id, id_actual),
                     )
 
-        # Reactivar claves foráneas
         cursor.execute("PRAGMA foreign_keys = ON;")
-
-        # Confirmar cambios
         conn.commit()
-        print("Actualización completada exitosamente.")
+        print(f"Actualización completada para: {geopackage_path}")
     
     except sqlite3.Error as e:
-        print(f"Error durante la actualización: {e}")
+        print(f"Error durante la actualización de {geopackage_path}: {e}")
         conn.rollback()
     
     finally:
-        # Cerrar conexión
         conn.close()
 
-# Ejemplo de uso
-ruta_geopackage = "modelo_captura_20241029 _diego.gpkg"
-incremento = 30000  # Valor a sumar a los IDs
-actualizar_ids_geopackage(ruta_geopackage, incremento)
+def procesar_geopackages_desde_txt(ruta_txt, incremento_inicial):
+    incremento = incremento_inicial
+
+    with open(ruta_txt, "r", encoding="utf-8") as archivo_txt:
+        rutas = archivo_txt.readlines()
+
+    for geopackage_path in rutas:
+        geopackage_path = geopackage_path.strip() 
+        if geopackage_path: 
+            actualizar_ids_geopackage(geopackage_path, incremento)
+            incremento += 1000  
+
+procesar_geopackages_desde_txt(ruta_txt, incremento_inicial)
