@@ -1,7 +1,7 @@
 import sqlite3
 
 # Ruta a tu archivo GeoPackage
-geopackage_path = "consolidado.gpkg"
+geopackage_path = "modelo_captura_20241029_vacio.gpkg"
 
 def migrate_data():
     try:

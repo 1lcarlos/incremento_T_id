@@ -8,14 +8,13 @@ logging.basicConfig(
     handlers=[logging.StreamHandler()]
 )
 
-ruta_txt = "rutas_geopackages.txt"  # Rutas de los GeoPackages de entrada
-geopackage2 = "modelo_captura_20241029_vacio.gpkg"  # GeoPackage de salida
+ruta_txt = "rutas_geopackages.txt"
+geopackage2 = "modelo_captura_20241029_vacio.gpkg"
 
-tablas = ["cca_usuario", "cca_predio", "cca_interesado", "cca_agrupacioninteresados", 
-          "cca_miembros", "cca_fuenteadministrativa", "cca_derecho", "cca_fuenteadministrativa_derecho", 
-          "cca_estructuranovedadfmi", "cca_estructuranovedadnumeropredial", "cca_predio_informalidad", 
-          "cca_predio_copropiedad", "cca_ofertasmercadoinmobiliario", "cca_calificacionconvencional", 
-          "cca_caracteristicasunidadconstruccion", "cca_adjunto"]
+tablas = ["cca_usuario", "cca_predio", "cca_interesado", "cca_agrupacioninteresados", "cca_miembros", "cca_fuenteadministrativa",
+          "cca_derecho", "cca_fuenteadministrativa_derecho", "cca_estructuranovedadfmi", "cca_estructuranovedadnumeropredial",
+          "cca_predio_informalidad", "cca_predio_copropiedad", "cca_ofertasmercadoinmobiliario", 
+          "cca_calificacionconvencional", "cca_caracteristicasunidadconstruccion", "cca_adjunto"]
 
 def quitar_prefijo(nombre):
     return nombre.replace("cca_", "", 1)
@@ -37,47 +36,49 @@ def eliminar_tabla_si_existe(geopackage, tabla):
             cursor = conn.cursor()
             cursor.execute(f"DROP TABLE IF EXISTS {tabla};")
             conn.commit()
+            logging.info(f"Tabla '{tabla}' eliminada en el GeoPackage destino si existía.")
     except Exception as e:
         logging.error(f"Error al intentar eliminar la tabla '{tabla}' en el GeoPackage destino: {e}")
 
-def procesar_geopackage(ruta_txt, geopackage2, tablas):
+def leer_rutas_desde_txt(ruta_txt):
     try:
-        rutas = leer_rutas(ruta_txt)
-        
-        for ruta in rutas:
-            logging.info(f"Procesando GeoPackage: {ruta}")
-            
-            tablas_disponibles = listar_tablas(ruta)
+        with open(ruta_txt, 'r', encoding='utf-8') as archivo:
+            rutas = [linea.strip() for linea in archivo.readlines()]
+        return rutas
+    except Exception as e:
+        logging.error(f"Error al leer el archivo '{ruta_txt}': {e}")
+        return []
 
+def procesar_geopackage(rutas_geopackages, geopackage2, tablas):
+    try:
+        for i, geopackage1 in enumerate(rutas_geopackages):
+            logging.info(f"Conectando al GeoPackage: {geopackage1}")
+            tablas_disponibles = listar_tablas(geopackage1)
+            if i == 0:
+                for tabla in tablas:
+                    eliminar_tabla_si_existe(geopackage2, quitar_prefijo(tabla))
+            
             for tabla in tablas:
                 if tabla not in tablas_disponibles:
-                    logging.warning(f"La tabla '{tabla}' no existe en el GeoPackage '{ruta}'. Saltando...")
+                    logging.warning(f"La tabla '{tabla}' no existe en el GeoPackage '{geopackage1}'. Saltando...")
                     continue
 
+                logging.info(f"Procesando la tabla '{tabla}'...")
                 try:
-                    with sqlite3.connect(ruta) as conn1:
+                    with sqlite3.connect(geopackage1) as conn1:
                         df = pd.read_sql_query(f"SELECT * FROM {tabla}", conn1)
 
                     nuevo_nombre = quitar_prefijo(tabla)
 
-                    eliminar_tabla_si_existe(geopackage2, nuevo_nombre)
-
                     with sqlite3.connect(geopackage2) as conn2:
-                        df.to_sql(nuevo_nombre, conn2, if_exists="replace", index=False)
+                        df.to_sql(nuevo_nombre, conn2, if_exists="append", index=False)
 
                     logging.info(f"Tabla '{tabla}' exportada como '{nuevo_nombre}' en el GeoPackage 2.")
                 except Exception as e:
-                    logging.error(f"Error al procesar la tabla '{tabla}' desde '{ruta}': {e}")
+                    logging.error(f"Error al procesar la tabla '{tabla}' desde '{geopackage1}': {e}")
 
     except Exception as e:
         logging.error(f"Error durante el procesamiento: {e}")
 
-def leer_rutas(archivo):
-    try:
-        with open(archivo, "r") as file:
-            return [line.strip() for line in file if line.strip()]
-    except Exception as e:
-        logging.error(f"Error al leer el archivo '{archivo}': {e}")
-        return []
-
-procesar_geopackage(ruta_txt, geopackage2, tablas)
+rutas_geopackages = leer_rutas_desde_txt(ruta_txt)
+procesar_geopackage(rutas_geopackages, geopackage2, tablas)
