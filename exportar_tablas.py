@@ -9,14 +9,14 @@ logging.basicConfig(
     handlers=[logging.StreamHandler()]
 )
 
-# Ruta a los GeoPackages
-geopackage1 = "modelo_captura_20241029 _diego.gpkg"
-geopackage2 = "modelo_captura_20241029_1_26.gpkg"
+# Archivos de texto con rutas a los GeoPackages
+geopackage1_txt = "geopackage1_list.txt"
+geopackage2_txt = "geopackage2_list.txt"
 
 # Listado de tablas a copiar y procesar
-tablas = ["cca_usuario","cca_predio", "cca_interesado", "cca_agrupacioninteresados", "cca_miembros", "cca_fuenteadministrativa",
+tablas = ["cca_usuario", "cca_predio", "cca_interesado", "cca_agrupacioninteresados", "cca_miembros", "cca_fuenteadministrativa",
           "cca_derecho", "cca_fuenteadministrativa_derecho", "cca_estructuranovedadfmi", "cca_estructuranovedadnumeropredial",
-          "cca_predio_informalidad", "cca_predio_copropiedad", "cca_ofertasmercadoinmobiliario", 
+          "cca_predio_informalidad", "cca_predio_copropiedad", "cca_ofertasmercadoinmobiliario",
           "cca_calificacionconvencional", "cca_caracteristicasunidadconstruccion", "cca_adjunto"]
 
 # Función para eliminar la sigla "cca_" del nombre de la tabla
@@ -52,7 +52,6 @@ def procesar_geopackage(geopackage1, geopackage2, tablas):
         # Listar tablas del GeoPackage 1
         logging.info(f"Conectando al GeoPackage: {geopackage1}")
         tablas_disponibles = listar_tablas(geopackage1)
-        """ logging.info(f"Tablas disponibles en '{geopackage1}': {tablas_disponibles}") """
 
         # Iterar sobre las tablas seleccionadas
         for tabla in tablas:
@@ -85,5 +84,26 @@ def procesar_geopackage(geopackage1, geopackage2, tablas):
     except Exception as e:
         logging.error(f"Error durante el procesamiento: {e}")
 
-# Ejecutar el script
-procesar_geopackage(geopackage1, geopackage2, tablas)
+# Leer las rutas desde los archivos .txt
+def leer_rutas(archivo):
+    try:
+        with open(archivo, "r") as file:
+            return [line.strip() for line in file if line.strip()]
+    except Exception as e:
+        logging.error(f"Error al leer el archivo '{archivo}': {e}")
+        return []
+
+# Ejecutar el procesamiento para todas las rutas
+def procesar_rutas_multiples(geopackage1_txt, geopackage2_txt, tablas):
+    rutas1 = leer_rutas(geopackage1_txt)
+    rutas2 = leer_rutas(geopackage2_txt)
+
+    if len(rutas1) != len(rutas2):
+        logging.error("La cantidad de rutas en los archivos no coincide.")
+        return
+
+    for geopackage1, geopackage2 in zip(rutas1, rutas2):
+        logging.info(f"Iniciando procesamiento entre '{geopackage1}' y '{geopackage2}'...")
+        procesar_geopackage(geopackage1, geopackage2, tablas)
+
+procesar_rutas_multiples(geopackage1_txt, geopackage2_txt, tablas)
