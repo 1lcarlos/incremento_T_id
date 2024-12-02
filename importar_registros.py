@@ -182,40 +182,6 @@ def migrate_data():
             calificacion_convencional
         FROM caracteristicasunidadconstruccion;
 
-        INSERT INTO cca_terreno (
-            T_Id, T_Ili_Tid, servidumbre_transito, area_terreno, etiqueta, geometria, predio
-        )
-        SELECT 
-            t_id, t_ili_tid, servidumbre_transito , area_terreno, etiqueta, geom,  predio
-        FROM "manzana_13 — cca_terreno" ;
-
-        INSERT INTO cca_construccion (
-            T_Id, T_Ili_Tid, identificador, tipo_construccion, tipo_dominio, 
-            numero_pisos, numero_sotanos, numero_mezanines, 
-            numero_semisotanos, area_construccion_alfanumerica, 
-            area_construccion_digital, anio_construccion, 
-            valor_referencia_construccion, etiqueta, altura, 
-            observaciones, geometria, predio
-        )
-        SELECT 
-            t_id, t_ili_tid, identificador , tipo_construccion , tipo_dominio , 
-            numero_pisos , numero_sotanos , numero_mezanines , numero_semisotanos , 
-            area_construccion_alfanumerica , area_construccion_digital , anio_construccion, 
-            valor_referencia_construccion , etiqueta, altura, 
-            observaciones,geom, predio
-        FROM "manzana_13 — cca_construccion" ;
-
-        INSERT INTO cca_unidadconstruccion (
-            T_Id, T_Ili_Tid, tipo_planta, planta_ubicacion, 
-            area_construida, altura, observaciones, geometria, 
-            caracteristicasunidadconstruccion, construccion
-        )
-        SELECT 
-            t_id, t_ili_tid, tipo_planta , planta_ubicacion , 
-            area_construida , altura, observaciones , geom,  
-            caracteristicasunidadconstruccion , construccion 
-        FROM "manzana_13 — cca_unidadconstruccion"  ;
-
         INSERT INTO cca_adjunto (
             T_Id,  archivo, observaciones, procedencia, tipo_archivo, relacion_soporte, 
             dependencia_ucons, ruta_modificada, cca_construccion_adjunto, cca_fuenteadminstrtiva_adjunto, 
@@ -228,21 +194,6 @@ def migrate_data():
             cca_interesado_adjunto, cca_predio_adjunto, cca_unidadconstruccion_adjunto, cca_puntocontrol_adjunto, 
             cca_puntolevantamiento_adjunto, cca_puntolindero_adjunto, cca_puntoreferencia_adjunto
         FROM adjunto; 
-        
-        INSERT INTO extdireccion (
-            T_Id, T_Seq, tipo_direccion, es_direccion_principal, 
-            localizacion, codigo_postal, clase_via_principal, 
-            valor_via_principal, letra_via_principal, sector_ciudad, 
-            valor_via_generadora, letra_via_generadora, numero_predio, 
-            sector_predio, complemento, nombre_predio, cca_predio_direccion
-        )
-        SELECT  
-            t_id, t_seq, tipo_direccion , es_direccion_principal , 
-            geom,codigo_postal , clase_via_principal , valor_via_principal , letra_via_principal , 
-            sector_ciudad , valor_via_generadora , letra_via_generadora, numero_predio, sector_predio, 
-            complemento , nombre_predio, cca_predio_direccion 
-        FROM "modelo_captura_20241029 _diego — extdireccion";
-
 
         """
                 

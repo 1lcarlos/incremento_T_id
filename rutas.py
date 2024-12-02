@@ -1,31 +1,18 @@
 import os
 
-rutas_directorios = [
-    r"C:\Users\Paula Aragonés\OneDrive\Documentos\Prueba",
-    r"C:\Users\Paula Aragonés\OneDrive\Documentos\Documentos pasantías",
-    r"C:\Users\Paula Aragonés\OneDrive\Documentos\Pijamas Consentidas"
-]
+def listar_archivos_y_guardar(ruta_carpeta, ruta_txt):
+    try:
+        with open(ruta_txt, 'w', encoding='utf-8') as archivo_txt:
+            for raiz, _, archivos in os.walk(ruta_carpeta):
+                for nombre_archivo in archivos:
+                    ruta_completa = os.path.join(raiz, nombre_archivo)
+                    ruta_relativa = os.path.relpath(ruta_completa, ruta_carpeta)
+                    archivo_txt.write(ruta_relativa + '\n')
+        print(f"Se ha creado el archivo: {ruta_txt}")
+    except Exception as e:
+        print(f"Error al listar archivos: {e}")
 
-def generar_lista_rutas_geopackages(directorios):
-    archivo_contador = 1
+ruta_carpeta = r"C:\Users\Paula Aragonés\OneDrive\Escritorio\ACC\Cuentas de cobro\Diciembre\incremento_T_id\gpkg"
+ruta_txt = "rutas_geopackages.txt"
 
-    for directorio in directorios:
-        if os.path.exists(directorio):
-            if archivo_contador == 1:
-                archivo_salida = os.path.join(directorio, "rutas_geopackages.txt")
-            else:
-                archivo_salida = os.path.join(directorio, f"geopackage{archivo_contador}_list.txt")
-
-            with open(archivo_salida, "w", encoding="utf-8") as archivo:
-                for root, dirs, files in os.walk(directorio):
-                    for file in files:
-                        if file.lower().endswith(".gpkg"):
-                            archivo.write(os.path.join(root, file) + "\n")
-            print(f"Archivo con las rutas generado: {archivo_salida}")
-            
-            archivo_contador += 1
-
-        else:
-            print(f"El directorio no existe: {directorio}")
-
-generar_lista_rutas_geopackages(rutas_directorios)
+listar_archivos_y_guardar(ruta_carpeta, ruta_txt)
